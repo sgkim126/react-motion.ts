@@ -1,6 +1,5 @@
-import React from 'react';
-import {TransitionMotion, spring} from '../../src/react-motion';
-import presets from '../../src/presets';
+import * as React from 'react';
+import {TransitionMotion, spring, presets} from 'react-motion';
 
 const Demo = React.createClass({
   getInitialState() {
@@ -25,11 +24,11 @@ const Demo = React.createClass({
   },
 
   // logic from todo, unrelated to animation
-  handleChange({target: {value}}) {
+  handleChange({target: {value}}): void {
     this.setState({value});
   },
 
-  handleSubmit(e) {
+  handleSubmit(e: React.FormEvent): void {
     e.preventDefault();
     const newItem = {
       key: 't' + Date.now(),
@@ -39,9 +38,9 @@ const Demo = React.createClass({
     this.setState({todos: [newItem].concat(this.state.todos)});
   },
 
-  handleDone(doneKey) {
+  handleDone(doneKey: React.FormEvent): void {
     this.setState({
-      todos: this.state.todos.map(todo => {
+      todos: this.state.todos.map((todo: any) => {
         const {key, data: {text, isDone}} = todo;
         return key === doneKey
           ? {key: key, data: {text: text, isDone: !isDone}}
@@ -53,13 +52,13 @@ const Demo = React.createClass({
   handleToggleAll() {
     const allNotDone = this.state.todos.every(({data}) => data.isDone);
     this.setState({
-      todos: this.state.todos.map(({key, data: {text, isDone}}) => (
+      todos: this.state.todos.map(({key, data: {text}}) => (
         {key: key, data: {text: text, isDone: !allNotDone}}
       )),
     });
   },
 
-  handleSelect(selected) {
+  handleSelect(selected: string) {
     this.setState({selected});
   },
 
@@ -67,13 +66,16 @@ const Demo = React.createClass({
     this.setState({todos: this.state.todos.filter(({data}) => !data.isDone)});
   },
 
-  handleDestroy(date) {
+  handleDestroy(date: number) {
     this.setState({todos: this.state.todos.filter(({key}) => key !== date)});
   },
 
   // actual animation-related logic
-  getDefaultStyles() {
-    return this.state.todos.map(todo => ({...todo, style: {height: 0, opacity: 1}}));
+  getDefaultStyles(): any[] {
+    return this.state.todos.map((todo: any) => {
+      // ({...todo, style: {height: 0, opacity: 1}}) typescript doesn't support spread operator for object
+      return Object.assign({}, todo, { style: {height: 0, opacity: 1} });
+    });
   },
 
   getStyles() {
@@ -84,14 +86,19 @@ const Demo = React.createClass({
         selected === 'active' && !isDone ||
         selected === 'all');
     })
-    .map((todo, i) => {
-      return {
-        ...todo,
-        style: {
-          height: spring(60, presets.gentle),
-          opacity: spring(1, presets.gentle),
-        }
-      };
+    .map((todo: any, i: number) => {
+      return Object.assign({}, todo, { style: {
+        height: spring(60, presets.gentle),
+        opacity: spring(1, presets.gentle),
+      }, });
+      // typescript doesn't support spread operator for object
+      // return {
+      //   ...todo,
+      //   style: {
+      //     height: spring(60, presets.gentle),
+      //     opacity: spring(1, presets.gentle),
+      //   }
+      // };
     });
   },
 
@@ -137,7 +144,7 @@ const Demo = React.createClass({
             styles={this.getStyles()}
             willLeave={this.willLeave}
             willEnter={this.willEnter}>
-            {styles =>
+            {(styles: any[]) =>
               <ul className="todo-list">
                 {styles.map(({key, style, data: {isDone, text}}) =>
                   <li key={key} style={style} className={isDone ? 'completed' : ''}>

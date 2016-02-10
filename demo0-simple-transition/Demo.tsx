@@ -1,21 +1,25 @@
-import React from 'react';
-import {Motion, spring} from '../../src/react-motion';
+import * as React from 'react';
+import {Motion, spring} from 'react-motion';
 
-const Demo = React.createClass({
-  getInitialState() {
+interface DemoStat extends React.Props<any> {
+  open?: boolean;
+}
+
+const Demo = React.createClass<{}, DemoStat>({
+  getInitialState(): DemoStat {
     return {open: false};
   },
 
-  handleMouseDown() {
+  handleMouseDown(): void {
     this.setState({open: !this.state.open});
   },
 
-  handleTouchStart(e) {
+  handleTouchStart(e: React.TouchEvent): void {
     e.preventDefault();
     this.handleMouseDown();
   },
 
-  render() {
+  render(): JSX.Element {
     return (
       <div>
         <button

@@ -1,6 +1,7 @@
-import React from 'react';
-import {Motion, spring} from '../../src/react-motion';
-import range from 'lodash.range';
+import * as React from 'react';
+import {Motion, spring} from 'react-motion';
+import {Style} from 'react-motion/Types';
+import { range } from 'lodash';
 
 const gridWidth = 150;
 const gridHeight = 150;
@@ -25,11 +26,11 @@ const Demo = React.createClass({
     window.addEventListener('touchend', this.handleMouseUp);
   },
 
-  handleTouchStart(pos, press, e) {
+  handleTouchStart(pos: [number, number], press: [number, number], e: React.TouchEvent): void {
     this.handleMouseDown(pos, press, e.touches[0]);
   },
 
-  handleMouseDown(pos, [pressX, pressY], {pageX, pageY}) {
+  handleMouseDown(pos: [number, number], [pressX, pressY]: [number, number], {pageX, pageY}: { pageX: number, pageY: number }): void {
     this.setState({
       delta: [pageX - pressX, pageY - pressY],
       mouse: [pressX, pressY],
@@ -38,7 +39,7 @@ const Demo = React.createClass({
     });
   },
 
-  handleTouchMove(e) {
+  handleTouchMove(e: React.TouchEvent) {
     if (this.state.isPressed) {
       e.preventDefault();
     }
@@ -60,28 +61,28 @@ const Demo = React.createClass({
     });
   },
 
-  handleChange(constant, num, {target}) {
+  handleChange(constant: string, num: number, {target}: {target: any}) {
     const {firstConfig: [s, d]} = this.state;
     if (constant === 'stiffness') {
       this.setState({
-        firstConfig: [target.value - num * 30, d],
+        firstConfig: [target.value - num * 30, d]
       });
     } else {
       this.setState({
-        firstConfig: [s, target.value - num * 2],
+        firstConfig: [s, target.value - num * 2]
       });
     }
   },
 
-  handleMouseDownInput(constant, num) {
+  handleMouseDownInput(constant: string, num: number): void {
     this.setState({
-      slider: {dragged: constant, num: num},
+      slider: {dragged: constant, num: num}
     });
   },
 
   render() {
     const {
-      mouse, isPressed, lastPressed, firstConfig: [s0, d0], slider: {dragged, num},
+      mouse, isPressed, lastPressed, firstConfig: [s0, d0], slider: {dragged, num}
     } = this.state;
     return (
       <div className="demo5">
@@ -95,7 +96,7 @@ const Demo = React.createClass({
             };
             const stiffness = s0 + i * 30;
             const damping = d0 + j * 2;
-            const motionStyle = isPressed
+            const motionStyle: Style = isPressed
               ? {x: mouse[0], y: mouse[1]}
               : {
                   x: spring(gridWidth / 2 - 25, {stiffness, damping}),
@@ -120,7 +121,7 @@ const Demo = React.createClass({
                   onChange={this.handleChange.bind(null, 'damping', j)} />
                 <Motion style={motionStyle}>
                   {({x, y}) => {
-                    let thing;
+                    let thing: JSX.Element;
                     if (dragged === 'stiffness') {
                       thing = i < num ? <div className="demo5-minus">-{(num - i) * 30}</div>
                         : i > num ? <div className="demo5-plus">+{(i - num) * 30}</div>

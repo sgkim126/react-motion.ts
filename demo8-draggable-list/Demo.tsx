@@ -1,8 +1,9 @@
-import React from 'react';
-import {Motion, spring} from '../../src/react-motion';
-import range from 'lodash.range';
+import * as React from 'react';
+import {Motion, spring} from 'react-motion';
+import {range} from 'lodash';
+import {Style} from 'react-motion/Types';
 
-function reinsert(arr, from, to) {
+function reinsert<T>(arr: T[], from: number , to: number): T[] {
   const _arr = arr.slice(0);
   const val = _arr[from];
   _arr.splice(from, 1);
@@ -10,7 +11,7 @@ function reinsert(arr, from, to) {
   return _arr;
 }
 
-function clamp(n, min, max) {
+function clamp(n: number, min: number, max: number): number {
   return Math.max(Math.min(n, max), min);
 }
 
@@ -35,16 +36,16 @@ const Demo = React.createClass({
     window.addEventListener('mouseup', this.handleMouseUp);
   },
 
-  handleTouchStart(key, pressLocation, e) {
+  handleTouchStart(key: number, pressLocation: number, e: React.TouchEvent) {
     this.handleMouseDown(key, pressLocation, e.touches[0]);
   },
 
-  handleTouchMove(e) {
+  handleTouchMove(e: React.TouchEvent) {
     e.preventDefault();
     this.handleMouseMove(e.touches[0]);
   },
 
-  handleMouseDown(pos, pressY, {pageY}) {
+  handleMouseDown(pos: number, pressY: number, {pageY}: {pageY: number}) {
     this.setState({
       delta: pageY - pressY,
       mouse: pressY,
@@ -73,7 +74,7 @@ const Demo = React.createClass({
     return (
       <div className="demo8">
         {range(itemsCount).map(i => {
-          const style = lastPressed === i && isPressed
+          const style: Style = lastPressed === i && isPressed
             ? {
                 scale: spring(1.1, springConfig),
                 shadow: spring(16, springConfig),

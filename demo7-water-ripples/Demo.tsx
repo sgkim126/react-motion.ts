@@ -1,5 +1,6 @@
-import React from 'react';
-import {TransitionMotion, spring} from '../../src/react-motion';
+import * as React from 'react';
+import {TransitionMotion, spring} from 'react-motion';
+import {TransitionStyle} from 'react-motion/Types';
 
 const leavingSpringConfig = {stiffness: 60, damping: 15};
 const Demo = React.createClass({
@@ -17,33 +18,32 @@ const Demo = React.createClass({
     });
   },
 
-  handleTouchMove(e) {
+  handleTouchMove(e: React.TouchEvent) {
     e.preventDefault();
     this.handleMouseMove(e.touches[0]);
   },
 
-  willLeave(styleCell) {
-    return {
-      ...styleCell.style,
+  willLeave(styleCell: TransitionStyle) {
+    return Object.assign({}, styleCell.style, {
       opacity: spring(0, leavingSpringConfig),
       scale: spring(2, leavingSpringConfig),
-    };
+    });
   },
 
   render() {
     const {mouse: [mouseX, mouseY], now} = this.state;
-    const styles = mouseX == null ? [] : [{
+    const styles: TransitionStyle[] = mouseX == null ? [] : [{
       key: now,
       style: {
         opacity: spring(1),
         scale: spring(0),
         x: spring(mouseX),
         y: spring(mouseY),
-      }
-    }];
+      },
+    }, ];
     return (
       <TransitionMotion willLeave={this.willLeave} styles={styles}>
-        {circles =>
+        {(circles: any[]) =>
           <div
             onMouseMove={this.handleMouseMove}
             onTouchMove={this.handleTouchMove}

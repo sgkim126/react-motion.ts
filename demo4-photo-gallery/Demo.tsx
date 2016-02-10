@@ -1,5 +1,5 @@
-import React from 'react';
-import {Motion, spring} from '../../src/react-motion';
+import * as React from 'react';
+import {Motion, spring} from 'react-motion';
 
 const springSettings = {stiffness: 170, damping: 26};
 const Demo = React.createClass({
@@ -22,10 +22,10 @@ const Demo = React.createClass({
 
     const leftStartCoords = widths
       .slice(0, currPhoto)
-      .reduce((sum, width) => sum - width, 0);
+      .reduce((sum: number, width: number) => sum - width, 0);
 
-    let configs = [];
-    photos.reduce((prevLeft, [origW, origH], i) => {
+    let configs: any[] = [];
+    photos.reduce((prevLeft: number, orig: [number, number], i: number) => {
       configs.push({
         left: spring(prevLeft, springSettings),
         height: spring(currHeight, springSettings),
@@ -45,11 +45,11 @@ const Demo = React.createClass({
           onChange={this.handleChange} />
         <div className="demo4">
           <Motion style={{height: spring(currHeight), width: spring(currWidth)}}>
-            {container =>
+            {(container: any) =>
               <div className="demo4-inner" style={container}>
                 {configs.map((style, i) =>
                   <Motion key={i} style={style}>
-                    {style =>
+                    {(style: any) =>
                       <img className="demo4-photo" src={`./${i}.jpg`} style={style} />
                     }
                   </Motion>

@@ -1,10 +1,11 @@
-import React from 'react';
-import {Motion, spring} from '../../src/react-motion';
-import range from 'lodash.range';
+import * as React from 'react';
+import {Motion, spring} from 'react-motion';
+import {Style} from 'react-motion/Types';
+import {range} from 'lodash';
 
 const springSetting1 = {stiffness: 180, damping: 10};
 const springSetting2 = {stiffness: 120, damping: 17};
-function reinsert(arr, from, to) {
+function reinsert<A>(arr: A[], from: number, to: number): A[] {
   const _arr = arr.slice(0);
   const val = _arr[from];
   _arr.splice(from, 1);
@@ -12,7 +13,7 @@ function reinsert(arr, from, to) {
   return _arr;
 }
 
-function clamp(n, min, max) {
+function clamp(n: number, min: number, max: number): number {
   return Math.max(Math.min(n, max), min);
 }
 
@@ -39,18 +40,18 @@ const Demo = React.createClass({
     };
   },
 
-  componentDidMount() {
+  componentDidMount(): void {
     window.addEventListener('touchmove', this.handleTouchMove);
     window.addEventListener('touchend', this.handleMouseUp);
     window.addEventListener('mousemove', this.handleMouseMove);
     window.addEventListener('mouseup', this.handleMouseUp);
   },
 
-  handleTouchStart(key, pressLocation, e) {
+  handleTouchStart(key: number, pressLocation: [number, number], e: React.TouchEvent): void {
     this.handleMouseDown(key, pressLocation, e.touches[0]);
   },
 
-  handleTouchMove(e) {
+  handleTouchMove(e: React.TouchEvent): void {
     e.preventDefault();
     this.handleMouseMove(e.touches[0]);
   },
@@ -67,7 +68,7 @@ const Demo = React.createClass({
     }
   },
 
-  handleMouseDown(key, [pressX, pressY], {pageX, pageY}) {
+  handleMouseDown(key: number, [pressX, pressY]: [number, number], {pageX, pageY}) {
     this.setState({
       lastPress: key,
       isPressed: true,
@@ -84,10 +85,10 @@ const Demo = React.createClass({
     const {order, lastPress, isPressed, mouse} = this.state;
     return (
       <div className="demo2">
-        {order.map((_, key) => {
-          let style;
-          let x;
-          let y;
+        {order.map((_: React.ReactNode, key: number) => {
+          let style: Style;
+          let x: number;
+          let y: number;
           const visualPosition = order.indexOf(key);
           if (key === lastPress && isPressed) {
             [x, y] = mouse;
