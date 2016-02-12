@@ -20,6 +20,14 @@
   "scripts": {
     "preinstall": "typings install --no-insight",
     "lint": "tslint --config ./tslint.json demo*/*.ts*",
+    "demo0-simple-transition": "./build.sh demo0-simple-transition",
+    "demo1-chat-heads": "./build.sh demo1-chat-heads",
+    "demo2-draggable-balls": "./build.sh demo2-draggable-balls",
+    "demo3-todomvc-list-transition": "./build.sh demo3-todomvc-list-transition",
+    "demo4-photo-gallery": "./build.sh demo4-photo-gallery",
+    "demo5-spring-parameters-chooser": "./build.sh demo5-spring-parameters-chooser",
+    "demo7-water-ripples": "./build.sh demo7-water-ripples",
+    "demo8-draggable-list": "./build.sh demo8-draggable-list",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

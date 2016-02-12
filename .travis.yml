@@ -1,0 +1,22 @@
+language: node_js
+env:
+    - NAME=demo0-simple-transition
+    - NAME=demo1-chat-heads
+    - NAME=demo2-draggable-balls
+    - NAME=demo3-todomvc-list-transition
+    - NAME=demo4-photo-gallery
+    - NAME=demo5-spring-parameters-chooser
+    - NAME=demo7-water-ripples
+    - NAME=demo8-draggable-list
+    - NAME=lint
+
+node_js:
+    - 5
+
+cache:
+    directories:
+        - node_modules
+        - typings
+
+script:
+    npm run ${NAME}
