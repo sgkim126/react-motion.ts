@@ -1,4 +1,4 @@
-# react-motion.ts
+# react-motion.ts [![Build Status](https://travis-ci.org/sgkim126/react-motion.ts.svg?branch=master)](https://travis-ci.org/sgkim126/react-motion.ts)
 TypeScript port of [react-motion/demos](https://github.com/chenglou/react-motion/tree/master/demos).
 This repository shows how to use [react-motion]((https://github.com/chenglou/react-motion/) in TypeScript.
 
