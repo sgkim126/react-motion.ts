@@ -5,26 +5,28 @@ interface DemoStat extends React.Props<any> {
   open?: boolean;
 }
 
-const Demo = React.createClass<{}, DemoStat>({
-  getInitialState(): DemoStat {
-    return {open: false};
-  },
+export default class Demo extends React.Component<{}, DemoStat> {
+  constructor(props: {}) {
+    super(props);
 
-  handleMouseDown(): void {
+    this.state = {open: false};
+  }
+
+  private handleMouseDown(): void {
     this.setState({open: !this.state.open});
-  },
+  }
 
-  handleTouchStart(e: React.TouchEvent): void {
+  private handleTouchStart(e: React.TouchEvent): void {
     e.preventDefault();
     this.handleMouseDown();
-  },
+  }
 
-  render(): JSX.Element {
+  public render(): JSX.Element {
     return (
       <div>
         <button
-          onMouseDown={this.handleMouseDown}
-          onTouchStart={this.handleTouchStart}>
+          onMouseDown={this.handleMouseDown.bind(this)}
+          onTouchStart={this.handleTouchStart.bind(this)}>
           Toggle
         </button>
 
@@ -42,7 +44,5 @@ const Demo = React.createClass<{}, DemoStat>({
         </Motion>
       </div>
     );
-  },
-});
-
-export default Demo;
+  }
+}

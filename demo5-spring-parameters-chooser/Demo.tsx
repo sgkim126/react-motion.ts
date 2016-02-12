@@ -7,9 +7,20 @@ const gridWidth = 150;
 const gridHeight = 150;
 const grid = range(4).map(() => range(6));
 
-const Demo = React.createClass({
-  getInitialState() {
-    return {
+interface State {
+  delta?: [number, number];
+  mouse?: [number, number];
+  isPressed?: boolean;
+  firstConfig?: [number, number];
+  slider?: { dragged?: string, num: number };
+  lastPressed?: [number, number];
+}
+
+export default class Demo extends React.Component<{}, State> {
+  constructor(props: {}) {
+    super(props);
+
+    this.state = {
       delta: [0, 0],
       mouse: [0, 0],
       isPressed: false,
@@ -17,51 +28,54 @@ const Demo = React.createClass({
       slider: {dragged: null, num: 0},
       lastPressed: [0, 0],
     };
-  },
+  }
 
-  componentDidMount() {
-    window.addEventListener('mousemove', this.handleMouseMove);
-    window.addEventListener('touchmove', this.handleTouchMove);
-    window.addEventListener('mouseup', this.handleMouseUp);
-    window.addEventListener('touchend', this.handleMouseUp);
-  },
+  public componentDidMount(): void {
+    window.addEventListener('mousemove', this.handleMouseMove.bind(this));
+    window.addEventListener('touchmove', this.handleTouchMove.bind(this));
+    window.addEventListener('mouseup', this.handleMouseUp.bind(this));
+    window.addEventListener('touchend', this.handleMouseUp.bind(this));
+  }
 
-  handleTouchStart(pos: [number, number], press: [number, number], e: React.TouchEvent): void {
+  private handleTouchStart(pos: [number, number], press: [number, number], e: React.TouchEvent): void {
     this.handleMouseDown(pos, press, e.touches[0]);
-  },
+  }
 
-  handleMouseDown(pos: [number, number], [pressX, pressY]: [number, number], {pageX, pageY}: { pageX: number, pageY: number }): void {
+  private handleMouseDown(
+    pos: [number, number],
+    [pressX, pressY]: [number, number],
+    {pageX, pageY}: { pageX: number, pageY: number }): void {
     this.setState({
       delta: [pageX - pressX, pageY - pressY],
       mouse: [pressX, pressY],
       isPressed: true,
       lastPressed: pos,
     });
-  },
+  }
 
-  handleTouchMove(e: React.TouchEvent) {
+  private handleTouchMove(e: React.TouchEvent) {
     if (this.state.isPressed) {
       e.preventDefault();
     }
     this.handleMouseMove(e.touches[0]);
-  },
+  }
 
-  handleMouseMove({pageX, pageY}) {
+  private handleMouseMove({pageX, pageY}) {
     const {isPressed, delta: [dx, dy]} = this.state;
     if (isPressed) {
       this.setState({mouse: [pageX - dx, pageY - dy]});
     }
-  },
+  }
 
-  handleMouseUp() {
+  private handleMouseUp(): void {
     this.setState({
       isPressed: false,
       delta: [0, 0],
       slider: {dragged: null, num: 0},
     });
-  },
+  }
 
-  handleChange(constant: string, num: number, {target}: {target: any}) {
+  private handleChange(constant: string, num: number, {target}: {target: any}) {
     const {firstConfig: [s, d]} = this.state;
     if (constant === 'stiffness') {
       this.setState({
@@ -72,15 +86,15 @@ const Demo = React.createClass({
         firstConfig: [s, target.value - num * 2]
       });
     }
-  },
+  }
 
-  handleMouseDownInput(constant: string, num: number): void {
+  private handleMouseDownInput(constant: string, num: number): void {
     this.setState({
       slider: {dragged: constant, num: num}
     });
-  },
+  }
 
-  render() {
+  public render(): JSX.Element {
     const {
       mouse, isPressed, lastPressed, firstConfig: [s0, d0], slider: {dragged, num}
     } = this.state;
@@ -109,16 +123,16 @@ const Demo = React.createClass({
                   type="range"
                   min={0}
                   max={300}
-                  value={stiffness}
-                  onMouseDown={this.handleMouseDownInput.bind(null, 'stiffness', i)}
-                  onChange={this.handleChange.bind(null, 'stiffness', i)} />
+                  value={stiffness.toString()}
+                  onMouseDown={this.handleMouseDownInput.bind(this, 'stiffness', i)}
+                  onChange={this.handleChange.bind(this, 'stiffness', i)} />
                 <input
                   type="range"
                   min={0}
                   max={40}
-                  value={damping}
-                  onMouseDown={this.handleMouseDownInput.bind(null, 'damping', j)}
-                  onChange={this.handleChange.bind(null, 'damping', j)} />
+                  value={damping.toString()}
+                  onMouseDown={this.handleMouseDownInput.bind(this, 'damping', j)}
+                  onChange={this.handleChange.bind(this, 'damping', j)} />
                 <Motion style={motionStyle}>
                   {({x, y}) => {
                     let thing: JSX.Element;
@@ -141,8 +155,8 @@ const Demo = React.createClass({
                           WebkitTransform: `translate3d(${x}px, ${y}px, 0)`,
                         }}
                         className={'demo5-ball ' + active}
-                        onMouseDown={this.handleMouseDown.bind(null, [i, j], [x, y])}
-                        onTouchStart={this.handleTouchStart.bind(null, [i, j], [x, y])}>
+                        onMouseDown={this.handleMouseDown.bind(this, [i, j], [x, y])}
+                        onTouchStart={this.handleTouchStart.bind(this, [i, j], [x, y])}>
                         <div className="demo5-preset">
                           {stiffness}{dragged === 'stiffness' && thing}
                         </div>
@@ -159,8 +173,5 @@ const Demo = React.createClass({
         })}
       </div>
     );
-  },
-});
-
-
-export default Demo;
+  }
+}

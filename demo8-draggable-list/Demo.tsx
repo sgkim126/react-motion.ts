@@ -18,43 +18,55 @@ function clamp(n: number, min: number, max: number): number {
 const springConfig = {stiffness: 300, damping: 50};
 const itemsCount = 4;
 
-const Demo = React.createClass({
-  getInitialState() {
-    return {
+interface Props {
+}
+interface State {
+  delta?: number;
+  mouse?: number;
+  isPressed?: boolean;
+  lastPressed?: number;
+  order?: number[];
+}
+
+export default class Demo extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+
+    this.state = {
       delta: 0,
       mouse: 0,
       isPressed: false,
       lastPressed: 0,
       order: range(itemsCount),
     };
-  },
+  }
 
-  componentDidMount() {
-    window.addEventListener('touchmove', this.handleTouchMove);
-    window.addEventListener('touchend', this.handleMouseUp);
-    window.addEventListener('mousemove', this.handleMouseMove);
-    window.addEventListener('mouseup', this.handleMouseUp);
-  },
+  public componentDidMount(): void {
+    window.addEventListener('touchmove', this.handleTouchMove.bind(this));
+    window.addEventListener('touchend', this.handleMouseUp.bind(this));
+    window.addEventListener('mousemove', this.handleMouseMove.bind(this));
+    window.addEventListener('mouseup', this.handleMouseUp.bind(this));
+  }
 
-  handleTouchStart(key: number, pressLocation: number, e: React.TouchEvent) {
+  private handleTouchStart(key: number, pressLocation: number, e: React.TouchEvent): void {
     this.handleMouseDown(key, pressLocation, e.touches[0]);
-  },
+  }
 
-  handleTouchMove(e: React.TouchEvent) {
+  private handleTouchMove(e: React.TouchEvent): void {
     e.preventDefault();
     this.handleMouseMove(e.touches[0]);
-  },
+  }
 
-  handleMouseDown(pos: number, pressY: number, {pageY}: {pageY: number}) {
+  private handleMouseDown(pos: number, pressY: number, {pageY}: {pageY: number}): void {
     this.setState({
       delta: pageY - pressY,
       mouse: pressY,
       isPressed: true,
       lastPressed: pos,
     });
-  },
+  }
 
-  handleMouseMove({pageY}) {
+  private handleMouseMove({pageY}): void {
     const {isPressed, delta, order, lastPressed} = this.state;
     if (isPressed) {
       const mouse = pageY - delta;
@@ -62,13 +74,13 @@ const Demo = React.createClass({
       const newOrder = reinsert(order, order.indexOf(lastPressed), row);
       this.setState({mouse: mouse, order: newOrder});
     }
-  },
+  }
 
-  handleMouseUp() {
+  private handleMouseUp(): void {
     this.setState({isPressed: false, delta: 0});
-  },
+  }
 
-  render() {
+  public render(): JSX.Element {
     const {mouse, isPressed, lastPressed, order} = this.state;
 
     return (
@@ -89,8 +101,8 @@ const Demo = React.createClass({
             <Motion style={style} key={i}>
               {({scale, shadow, y}) =>
                 <div
-                  onMouseDown={this.handleMouseDown.bind(null, i, y)}
-                  onTouchStart={this.handleTouchStart.bind(null, i, y)}
+                  onMouseDown={this.handleMouseDown.bind(this, i, y)}
+                  onTouchStart={this.handleTouchStart.bind(this, i, y)}
                   className="demo8-item"
                   style={{
                     boxShadow: `rgba(0, 0, 0, 0.2) 0px ${shadow}px ${2 * shadow}px 0px`,
@@ -106,7 +118,5 @@ const Demo = React.createClass({
         })}
       </div>
     );
-  },
-});
-
-export default Demo;
+  }
+}

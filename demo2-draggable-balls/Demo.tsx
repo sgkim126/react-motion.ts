@@ -29,59 +29,73 @@ const layout = range(count).map(n => {
   return [width * col, height * row];
 });
 
-const Demo = React.createClass({
-  getInitialState() {
-    return {
+interface State {
+  mouse?: [number, number];
+  delta?: [number, number];
+  lastPress?: number;
+  isPressed?: boolean;
+  order?: number[];
+}
+
+interface Props {
+  style?: Style;
+}
+
+export default class Demo extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+
+    this.state = {
       mouse: [0, 0],
       delta: [0, 0], // difference between mouse and circle pos, for dragging
       lastPress: null, // key of the last pressed component
       isPressed: false,
       order: range(count), // index: visual position. value: component key/id
     };
-  },
+  }
 
-  componentDidMount(): void {
-    window.addEventListener('touchmove', this.handleTouchMove);
-    window.addEventListener('touchend', this.handleMouseUp);
-    window.addEventListener('mousemove', this.handleMouseMove);
-    window.addEventListener('mouseup', this.handleMouseUp);
-  },
+  public componentDidMount(): void {
+    window.addEventListener('touchmove', this.handleTouchMove.bind(this));
+    window.addEventListener('touchend', this.handleMouseUp.bind(this));
+    window.addEventListener('mousemove', this.handleMouseMove.bind(this));
+    window.addEventListener('mouseup', this.handleMouseUp.bind(this));
+  }
 
-  handleTouchStart(key: number, pressLocation: [number, number], e: React.TouchEvent): void {
+  private handleTouchStart(key: number, pressLocation: [number, number], e: React.TouchEvent): void {
     this.handleMouseDown(key, pressLocation, e.touches[0]);
-  },
+  }
 
-  handleTouchMove(e: React.TouchEvent): void {
+  private handleTouchMove(e: React.TouchEvent): void {
     e.preventDefault();
     this.handleMouseMove(e.touches[0]);
-  },
+  }
 
-  handleMouseMove({pageX, pageY}) {
+  private handleMouseMove({pageX, pageY}): void {
     const {order, lastPress, isPressed, delta: [dx, dy]} = this.state;
     if (isPressed) {
-      const mouse = [pageX - dx, pageY - dy];
+      const mouse: [number, number] = [pageX - dx, pageY - dy];
       const col = clamp(Math.floor(mouse[0] / width), 0, 2);
       const row = clamp(Math.floor(mouse[1] / height), 0, Math.floor(count / 3));
       const index = row * 3 + col;
       const newOrder = reinsert(order, order.indexOf(lastPress), index);
       this.setState({mouse: mouse, order: newOrder});
     }
-  },
+  }
 
-  handleMouseDown(key: number, [pressX, pressY]: [number, number], {pageX, pageY}) {
+  private handleMouseDown(key: number, [pressX, pressY]: [number, number], {pageX, pageY}): void {
     this.setState({
       lastPress: key,
       isPressed: true,
       delta: [pageX - pressX, pageY - pressY],
       mouse: [pressX, pressY],
     });
-  },
+  }
 
-  handleMouseUp() {
+  private handleMouseUp(): void {
     this.setState({isPressed: false, delta: [0, 0]});
-  },
+  }
 
-  render() {
+  public render(): JSX.Element {
     const {order, lastPress, isPressed, mouse} = this.state;
     return (
       <div className="demo2">
@@ -111,8 +125,8 @@ const Demo = React.createClass({
             <Motion key={key} style={style}>
               {({translateX, translateY, scale, boxShadow}) =>
                 <div
-                  onMouseDown={this.handleMouseDown.bind(null, key, [x, y])}
-                  onTouchStart={this.handleTouchStart.bind(null, key, [x, y])}
+                  onMouseDown={this.handleMouseDown.bind(this, key, [x, y])}
+                  onTouchStart={this.handleTouchStart.bind(this, key, [x, y])}
                   className="demo2-ball"
                   style={{
                     backgroundColor: allColors[key],
@@ -128,7 +142,5 @@ const Demo = React.createClass({
         })}
       </div>
     );
-  },
-});
-
-export default Demo;
+  }
+}

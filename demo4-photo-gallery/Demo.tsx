@@ -1,20 +1,29 @@
 import * as React from 'react';
 import {Motion, spring} from 'react-motion';
+import {Style} from 'react-motion/Types';
 
 const springSettings = {stiffness: 170, damping: 26};
-const Demo = React.createClass({
-  getInitialState() {
-    return {
+
+interface State {
+  photos?: [number, number][];
+  currPhoto: number;
+}
+
+export default class Demo extends React.Component<{}, State> {
+  constructor(props: {}) {
+    super(props);
+
+    this.state = {
       photos: [[500, 350], [800, 600], [800, 400], [700, 500], [200, 650], [600, 600]],
       currPhoto: 0,
     };
-  },
+  }
 
-  handleChange({target: {value}}) {
+  private handleChange({target: {value}}): void {
     this.setState({currPhoto: value});
-  },
+  }
 
-  render() {
+  public render(): JSX.Element {
     const {photos, currPhoto} = this.state;
     const [currWidth, currHeight] = photos[currPhoto];
 
@@ -24,7 +33,7 @@ const Demo = React.createClass({
       .slice(0, currPhoto)
       .reduce((sum: number, width: number) => sum - width, 0);
 
-    let configs: any[] = [];
+    let configs: Style[] = [];
     photos.reduce((prevLeft: number, orig: [number, number], i: number) => {
       configs.push({
         left: spring(prevLeft, springSettings),
@@ -41,15 +50,15 @@ const Demo = React.createClass({
           type="range"
           min={0}
           max={photos.length - 1}
-          value={currPhoto}
-          onChange={this.handleChange} />
+          value={currPhoto.toString()}
+          onChange={this.handleChange.bind(this)} />
         <div className="demo4">
           <Motion style={{height: spring(currHeight), width: spring(currWidth)}}>
             {(container: any) =>
               <div className="demo4-inner" style={container}>
-                {configs.map((style, i) =>
+                {configs.map((style: Style, i: number) =>
                   <Motion key={i} style={style}>
-                    {(style: any) =>
+                    {(style: Style): JSX.Element =>
                       <img className="demo4-photo" src={`./${i}.jpg`} style={style} />
                     }
                   </Motion>
@@ -60,7 +69,5 @@ const Demo = React.createClass({
         </div>
       </div>
     );
-  },
-});
-
-export default Demo;
+  }
+}

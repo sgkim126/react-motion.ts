@@ -1,14 +1,25 @@
 import * as React from 'react';
 import {TransitionMotion, spring} from 'react-motion';
-import {TransitionStyle} from 'react-motion/Types';
+import {Style, TransitionStyle} from 'react-motion/Types';
 
 const leavingSpringConfig = {stiffness: 60, damping: 15};
-const Demo = React.createClass({
-  getInitialState() {
-    return {mouse: [], now: 't' + 0};
-  },
 
-  handleMouseMove({pageX, pageY}) {
+interface Props {
+}
+
+interface State {
+  mouse: number[];
+  now: string;
+}
+
+export default class Demo extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+
+    this.state = {mouse: [], now: 't' + 0};
+  }
+
+  private handleMouseMove({pageX, pageY}): void {
     // Make sure the state is queued and not batched.
     this.setState(() => {
       return {
@@ -16,21 +27,21 @@ const Demo = React.createClass({
         now: 't' + Date.now(),
       };
     });
-  },
+  }
 
-  handleTouchMove(e: React.TouchEvent) {
+  private handleTouchMove(e: React.TouchEvent): void {
     e.preventDefault();
     this.handleMouseMove(e.touches[0]);
-  },
+  }
 
-  willLeave(styleCell: TransitionStyle) {
+  private willLeave(styleCell: TransitionStyle): Style {
     return Object.assign({}, styleCell.style, {
       opacity: spring(0, leavingSpringConfig),
       scale: spring(2, leavingSpringConfig),
     });
-  },
+  }
 
-  render() {
+  public render(): JSX.Element {
     const {mouse: [mouseX, mouseY], now} = this.state;
     const styles: TransitionStyle[] = mouseX == null ? [] : [{
       key: now,
@@ -42,11 +53,11 @@ const Demo = React.createClass({
       },
     }, ];
     return (
-      <TransitionMotion willLeave={this.willLeave} styles={styles}>
+      <TransitionMotion willLeave={this.willLeave.bind(this)} styles={styles}>
         {(circles: any[]) =>
           <div
-            onMouseMove={this.handleMouseMove}
-            onTouchMove={this.handleTouchMove}
+            onMouseMove={this.handleMouseMove.bind(this)}
+            onTouchMove={this.handleTouchMove.bind(this)}
             className="demo7">
             {circles.map(({key, style: {opacity, scale, x, y}}) =>
               <div
@@ -63,7 +74,5 @@ const Demo = React.createClass({
         }
       </TransitionMotion>
     );
-  },
-});
-
-export default Demo;
+  }
+}
