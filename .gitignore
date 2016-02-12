@@ -1,0 +1,7 @@
+*.jsx
+*.tsx
+/*.json
+/build.sh
+/node_modules/
+/typings/
+/webpack.config.js
